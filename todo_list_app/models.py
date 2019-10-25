@@ -9,4 +9,20 @@ class Todo(models.Model):
     priority = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.todo_name
+        return '{}'.format(self.todo_name)
+
+    @classmethod
+    def todo_list(cls, parent=None):
+        tree = []
+        parent = parent.id if parent else None
+
+        todo_list = Todo.objects.filter(parent_todo=parent).order_by('pub_date')
+        import collections
+        for todo in todo_list:
+            tree.append(dict({
+                'todo_name': todo.todo_name,
+                'pub_date': todo.pub_date,
+                'child_list': cls.todo_list(todo),
+            }))
+
+        return tree
