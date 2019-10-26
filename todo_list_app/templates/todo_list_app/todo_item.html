@@ -1,9 +1,12 @@
 <li>
     {{ todo.todo_name  }} ({{ todo.priority }})
-    <a href="/{{ todo.id }}">[Detail]</a>
-    <a href="/modify?id={{ todo.id }}">[Modify]</a>
-    <a href="/modify?parent_todo={{ todo.id }}">[+Child Todo]</a>
-    <a href="/delete?id={{ todo.id }}">[Delete]</a>
+    <button onclick="location.href='/{{ todo.id }}'">Detail</button>
+    <button onclick="location.href='/modify?id={{ todo.id }}'">Modify</button>
+    <button onclick="location.href='/modify?parent_todo={{ todo.id }}'">+Child Todo</button>
+    <form action="/delete">
+        <input type="hidden" value="{{ todo.id }}" />
+        <input type="submit" value="Delete" />
+    </form>
     {% if todo.child_list %}
         {% with depth=depth|add:"1" %}
             {% for child in todo.child_list %}

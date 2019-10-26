@@ -17,13 +17,13 @@ class Todo(models.Model):
         parent = parent.id if parent else None
 
         todo_list = Todo.objects.filter(parent_todo=parent).order_by('pub_date')
-        import collections
         for todo in todo_list:
-            tree.append(dict({
-                'id': todo.id,
-                'todo_name': todo.todo_name,
-                'pub_date': todo.pub_date,
+            node = todo.__dict__.copy()
+            node.update({
                 'child_list': cls.todo_list(todo),
-            }))
+            })
+            del node['_state']
+
+            tree.append(node)
 
         return tree
