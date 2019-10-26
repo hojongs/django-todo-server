@@ -3,9 +3,10 @@
     <button onclick="location.href='/{{ todo.id }}'">Detail</button>
     <button onclick="location.href='/modify?id={{ todo.id }}'">Modify</button>
     <button onclick="location.href='/modify?parent_todo={{ todo.id }}'">+Child Todo</button>
-    <form action="/delete">
-        <input type="hidden" value="{{ todo.id }}" />
+    <form action="/delete/" method="post">
+        <input type="hidden" name="id" value="{{ todo.id }}" />
         <input type="submit" value="Delete" />
+        {% csrf_token %}
     </form>
     {% if todo.child_list %}
         {% with depth=depth|add:"1" %}

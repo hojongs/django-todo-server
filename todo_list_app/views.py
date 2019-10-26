@@ -26,26 +26,39 @@ def detail(request, todo_id):
 
 
 def modify(request):
-    try:
-        todo = Todo.objects.get(id=request.GET.get('id'))
-    except Exception as e:
-        todo = None
 
     if request.method == 'GET':
         # init form
-        if todo:
+        try:
+            todo = Todo.objects.get(id=request.GET.get('id'))
             form = TodoForm(instance=todo)
-        else:
+        except Exception as e:
             parent_todo = request.GET.get('parent_todo')
             form = TodoForm(initial={'parent_todo': parent_todo})
     else:
-        form = TodoForm(request.POST, instance=todo)
-        if form.is_valid():
-            todo = form.save()
+        try:
+            todo = Todo.objects.get(id=request.POST.get('id'))
+            form = TodoForm(request.POST, instance=todo)
+            if form.is_valid():
+                todo = form.save()
             return HttpResponseRedirect('/')
+        except Exception as e:
+            form = TodoForm(instance=todo)
 
     return render(request, 'todo_list_app/modify.html', {'form': form})
 
 
 def todo_tree(request):
     return JsonResponse({'tree': Todo.todo_list()})
+
+
+def delete(request):
+    print(request.POST)
+    todo_id = request.POST.get('id')
+    try:
+        todo = Todo.objects.get(id=todo_id)
+        todo.delete()
+    except Exception as e:
+        pass
+
+    return HttpResponseRedirect('/')
