@@ -6,7 +6,8 @@
 </head>
 <body>
     <h1>Modify Todo</h1>
-    <form action=".?id={{ request.GET.id }}" method="post">
+    <form action="." method="post">
+        <input type="hidden" name="id" value="{{ request.GET.id }}" />
         {{ form }}
         {% csrf_token %}
         <input type="submit" value="Submit" />

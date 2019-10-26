@@ -39,11 +39,12 @@ def modify(request):
         try:
             todo = Todo.objects.get(id=request.POST.get('id'))
             form = TodoForm(request.POST, instance=todo)
-            if form.is_valid():
-                todo = form.save()
-            return HttpResponseRedirect('/')
         except Exception as e:
-            form = TodoForm(instance=todo)
+            form = TodoForm(request.POST)
+            
+        if form.is_valid():
+            todo = form.save()
+        return HttpResponseRedirect('/')
 
     return render(request, 'todo_list_app/modify.html', {'form': form})
 
