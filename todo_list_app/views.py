@@ -40,16 +40,5 @@ def modify(request):
     return render(request, 'todo_list_app/modify.html', {'form': form})
 
 
-def modify_action(request):
-    values = request.GET.dict()
-    print('values', values)
-    todo = Todo.objects.get(id=values.pop('todo_id'))
-    print(todo)
-    todo.__dict__ = values
-    print(todo)
-
-    return HttpResponse(todo)
-
-
 def todo_tree(request):
     return JsonResponse({'tree': Todo.todo_list()})
