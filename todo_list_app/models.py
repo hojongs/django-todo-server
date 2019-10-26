@@ -9,9 +9,7 @@ class Todo(models.Model):
     priority = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.todo_name
-        # return '{} / {} / {} / {}'.format(self.todo_name, self.pub_date,
-        #                                   self.parent_todo, self.priority)
+        return '{} ({})'.format(self.todo_name, self.priority)
 
     @classmethod
     def todo_list(cls, parent=None):

@@ -15,7 +15,14 @@ def index(request):
 
 
 def detail(request, todo_id):
-    return HttpResponse("detail page of %d" % todo_id)
+    try:
+        todo = Todo.objects.get(id=todo_id)
+    except Exception as e:
+        return HttpResponseRedirect('/')
+
+    template = loader.get_template('todo_list_app/detail.html')
+    ctxt = {'todo': todo}
+    return HttpResponse(template.render(ctxt, request))
 
 
 def modify(request):
