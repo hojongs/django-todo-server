@@ -54,7 +54,6 @@ def todo_tree(request):
 
 
 def delete(request):
-    print(request.POST)
     todo_id = request.POST.get('id')
     try:
         todo = Todo.objects.get(id=todo_id)
