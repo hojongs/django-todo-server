@@ -1,5 +1,5 @@
 <li>
-    {{ todo.todo_name }} <a href="/modify?id={{ todo.id }}">Modify</a> <a href="/modify?parent_todo={{ todo.id }}">+Child</a>
+    {{ todo.todo_name }} <a href="/modify?id={{ todo.id }}">[Modify]</a> <a href="/modify?parent_todo={{ todo.id }}">[+Child Todo]</a>
     {% if todo.child_list %}
         {% with depth=depth|add:"1" %}
             {% for child in todo.child_list %}

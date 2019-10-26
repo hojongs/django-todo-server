@@ -32,7 +32,6 @@ def modify(request):
             parent_todo = request.GET.get('parent_todo')
             form = TodoForm(initial={'parent_todo': parent_todo})
     else:
-        print('POST', request.POST)
         form = TodoForm(request.POST, instance=todo)
         if form.is_valid():
             todo = form.save()

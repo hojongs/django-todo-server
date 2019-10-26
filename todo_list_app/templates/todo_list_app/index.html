@@ -6,8 +6,8 @@
 </head>
 <body>
     <h1>Todo List</h1>
-    <a hrelf=""
     <ul>
+        <a href="/modify">[+Todo]</a>
         {% for todo in todo_list %}
             {% with depth=0 %}
                 {% include "todo_list_app/todo_item.html" %}
