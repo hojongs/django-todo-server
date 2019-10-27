@@ -39,11 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',  # django-cors-headers
+    # 'corsheaders',  # django-cors-headers
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # django-cors-headers
+    # 'corsheaders.middleware.CorsMiddleware',  # django-cors-headers
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,8 +53,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = False
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOW_CREDENTIALS = False
 
 ROOT_URLCONF = 'todo_list_server.urls'
 
