@@ -1,5 +1,6 @@
 function todo_li(todo) {
-    return $('<li></li>').text('[' + todo.id + '] ' + todo.todo_name + ' (' + todo.priority + ') [' + todo.pub_date + ']');
+    var todo_id = '[<a href="/' + todo.id + '/">' + todo.id + '</a>] '
+    return $('<li></li>').html(todo_id + todo.todo_name + ' (' + todo.priority + ') [' + todo.pub_date + ']');
 }
 
 function add_todo_li(todo, parent) {

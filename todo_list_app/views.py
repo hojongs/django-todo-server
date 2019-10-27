@@ -1,5 +1,4 @@
 import logging
-from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
@@ -27,11 +26,12 @@ def todo_list(request):
 
 def create_todo(request):
     if request.method == 'POST':
+        logger.info('[create_todo] request.POST=%s', request.POST)
         form = TodoForm(request.POST)
 
         if form.is_valid():
             todo = form.save()
-            logger.info('[create] created todo=%s', todo)
+            logger.info('[create_todo] created todo=%s', todo)
 
             return JsonResponse(todo.info_dict())
 
@@ -55,10 +55,11 @@ def todo_detail(request, todo_id):
 def update_todo(request, todo_id):
     if request.method == 'POST':
         try:
-            logger.info('[update_todo] todo_id=%s', todo_id)
+            logger.info('[update_todo] todo_id=%s request.POST=%s', todo_id, request.POST)
             todo = Todo.objects.get(id=todo_id)
+            todo.partial_update(request)
 
-            todo.__dict__.update(request.POST.items())
+            logger.info('[update_todo] todo.__dict__=%s', todo.__dict__)
             todo.full_clean()  # validation of fields
             todo.save()
             return JsonResponse(todo.info_dict())
@@ -90,7 +91,7 @@ def delete(request):
             todo = Todo.objects.get(id=delete_id)
             todo.delete()
 
-            return HttpResponseRedirect('/')
+            return JsonResponse({'success': True})
         except Exception as e:
             logger.error('[delete] %s', e)
 

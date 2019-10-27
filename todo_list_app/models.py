@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class Todo(models.Model):
@@ -9,7 +10,7 @@ class Todo(models.Model):
     priority = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return '{} ({})'.format(self.todo_name, self.priority)
+        return '<{} ({})>'.format(self.todo_name, self.priority)
 
     def info_dict(self):
         info_dict = self.__dict__.copy()
@@ -25,3 +26,15 @@ class Todo(models.Model):
         todo_list = Todo.objects.filter(parent_todo=parent_id).order_by('pub_date')
 
         return [todo.info_dict() for todo in todo_list]
+
+    def partial_update(self, request):
+        self.__dict__.update(request.POST.items())
+
+        # parse priority
+        if self.priority == '':
+            self.priority = None
+
+        # parse parent_todo
+        self.parent_todo_id = int(self.__dict__.pop('parent_todo'))
+        if self.parent_todo_id == self.id:
+            raise ValidationError('Invalid parent')

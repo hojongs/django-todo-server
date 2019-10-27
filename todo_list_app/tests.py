@@ -84,6 +84,7 @@ class BackendTestCase(django.test.TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_update_todo(self):
+        # success
         t = self.test_data[0]
         todo_name = 'changed todo'
         response = self.c.post('/b/todo/%s/' % t.id, {
@@ -92,6 +93,7 @@ class BackendTestCase(django.test.TestCase):
         self.assertEqual(len(self.test_data), len(Todo.objects.all()))
         self.assertEqual(Todo.objects.get(id=t.id).todo_name, todo_name)
 
+        # invalid pub_date
         t = self.test_data[1]
         origin_name = t.todo_name
         origin_pub_date = t.pub_date
@@ -101,11 +103,19 @@ class BackendTestCase(django.test.TestCase):
             'todo_name': todo_name,
             'pub_date': wrong_pub_date,
         })
-        print(response.status_code, response.content)
-
         t = Todo.objects.get(id=t.id)
         self.assertEqual(t.todo_name, origin_name)
         self.assertEqual(t.pub_date, origin_pub_date)
+
+        # invalid parent_todo (=self)
+        t = self.test_data[2]
+        response = self.c.post('/b/todo/%s/' % t.id, {
+            'parent_todo': t.id
+        })
+        t2 = Todo.objects.get(id=t.id)
+        self.assertEqual(t.parent_todo, t2.parent_todo)
+
+        # TODO each field change check
 
     def test_delete_todo_forbidden(self):
         t = self.test_data[0]

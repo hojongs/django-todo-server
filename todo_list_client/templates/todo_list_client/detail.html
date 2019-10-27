@@ -9,11 +9,12 @@
     <ul>
         <li id="todo_id">Todo ID : </li>
         <li id="pub_date">Date Published : </li>
-        <li>child_list :
-            <ul id="child_list"></ul>
+        <li>Todo Tree :
+            <ul id="todo_tree"></ul>
         </li>
         <li id="priority">Priority : </li>
-        <form action="/b/delete" method="post">
+        <a href="" id="update">Update</a>
+        <form action="/b/delete/" method="post">
             <input type="hidden" id="delete_id" name="delete_id" />
             <input type="submit" value="Delete" />
             {% csrf_token %}
