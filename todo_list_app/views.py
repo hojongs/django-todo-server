@@ -1,64 +1,93 @@
-import json
+import logging
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.template import loader
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 
 from .models import Todo
 from .forms import TodoForm
 
-
-def index(request):
-    template = loader.get_template('todo_list_app/index.html')
-    ctxt = {'todo_list': Todo.todo_list()}
-
-    return HttpResponse(template.render(ctxt, request))
+logger = logging.getLogger(__name__)
 
 
-def detail(request, todo_id):
-    try:
-        todo = Todo.objects.get(id=todo_id)
-    except Exception as e:
-        return HttpResponseRedirect('/')
-
-    template = loader.get_template('todo_list_app/detail.html')
-    ctxt = {'todo': todo}
-    return HttpResponse(template.render(ctxt, request))
-
-
-def modify(request):
-
+def todo(request):
     if request.method == 'GET':
-        # init form
-        try:
-            todo = Todo.objects.get(id=request.GET.get('id'))
-            form = TodoForm(instance=todo)
-        except Exception as e:
-            parent_todo = request.GET.get('parent_todo')
-            form = TodoForm(initial={'parent_todo': parent_todo})
+        return todo_list(request)
+    elif request.method == 'POST':
+        return create_todo(request)
     else:
-        try:
-            todo = Todo.objects.get(id=request.POST.get('id'))
-            form = TodoForm(request.POST, instance=todo)
-        except Exception as e:
-            form = TodoForm(request.POST)
-            
+        return HttpResponseForbidden()
+
+
+def todo_list(request):
+    parent_id = request.GET.get('parent_id')
+    logger.info('[todo_list] parent_id=%s', parent_id)
+
+    return JsonResponse({'todo_list': Todo.todo_list(parent_id=parent_id)})
+
+
+def create_todo(request):
+    if request.method == 'POST':
+        form = TodoForm(request.POST)
+
         if form.is_valid():
             todo = form.save()
-        return HttpResponseRedirect('/')
+            logger.info('[create] created todo=%s', todo)
 
-    return render(request, 'todo_list_app/modify.html', {'form': form})
+            return JsonResponse(todo.info_dict())
+
+    return HttpResponseForbidden()
 
 
-def todo_tree(request):
-    return JsonResponse({'tree': Todo.todo_list()})
+def todo_detail(request, todo_id):
+    if request.method == 'GET':
+        try:
+            todo = Todo.objects.get(id=todo_id)
+
+            return JsonResponse(todo.info_dict())
+        except Exception as e:
+            return HttpResponseBadRequest('Wrong Todo ID')
+    elif request.method == 'POST':
+        return update_todo(request, todo_id)
+    else:
+        return HttpResponseForbidden()
+
+
+def update_todo(request, todo_id):
+    if request.method == 'POST':
+        try:
+            logger.info('[update_todo] todo_id=%s', todo_id)
+            todo = Todo.objects.get(id=todo_id)
+
+            todo.__dict__.update(request.POST.items())
+            todo.save()
+
+            return JsonResponse(todo.info_dict())
+        except Exception as e:
+            logger.error(e)
+            return HttpResponseBadRequest('Wrong Todo ID')
+
+
+def todo_form(request):
+    todo_id = request.GET.get('todo_id')
+    try:
+        todo = Todo.objects.get(id=todo_id)
+    except:
+        todo = None
+
+    logger.info('[todo_form] todo_id=%s, todo=%s', todo_id, todo)
+    f = TodoForm(instance=todo)
+    return HttpResponse(str(f))
 
 
 def delete(request):
-    todo_id = request.POST.get('id')
-    try:
-        todo = Todo.objects.get(id=todo_id)
-        todo.delete()
-    except Exception as e:
-        pass
+    if request.method == 'POST':
+        delete_id = int(request.POST.get('delete_id'))
+        logger.info('[delete] %d', delete_id)
+        try:
+            todo = Todo.objects.get(id=delete_id)
+            todo.delete()
 
-    return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/')
+        except Exception as e:
+            logger.error('[delete] %s', e)
+
+    return HttpResponseForbidden()

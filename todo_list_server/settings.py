@@ -32,15 +32,18 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'todo_list_app.apps.TodoListAppConfig',
+    'todo_list_client.apps.TodoListClientConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',  # django-cors-headers
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # django-cors-headers
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,6 +52,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
 
 ROOT_URLCONF = 'todo_list_server.urls'
 
@@ -119,3 +125,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'debug_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+        'info_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'info.log',
+        },
+    },
+    'loggers': {
+        'todo_list_app': {
+            'handlers': ['debug_file', 'info_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

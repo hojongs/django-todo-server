@@ -11,19 +11,17 @@ class Todo(models.Model):
     def __str__(self):
         return '{} ({})'.format(self.todo_name, self.priority)
 
+    def info_dict(self):
+        info_dict = self.__dict__.copy()
+        info_dict.update({
+            'child_list': self.todo_list(self),
+        })
+        del info_dict['_state'], info_dict['parent_todo_id']
+
+        return info_dict
+
     @classmethod
-    def todo_list(cls, parent=None):
-        tree = []
-        parent = parent.id if parent else None
+    def todo_list(cls, parent_id=None):
+        todo_list = Todo.objects.filter(parent_todo=parent_id).order_by('pub_date')
 
-        todo_list = Todo.objects.filter(parent_todo=parent).order_by('pub_date')
-        for todo in todo_list:
-            node = todo.__dict__.copy()
-            node.update({
-                'child_list': cls.todo_list(todo),
-            })
-            del node['_state']
-
-            tree.append(node)
-
-        return tree
+        return [todo.info_dict() for todo in todo_list]
