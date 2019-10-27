@@ -18,10 +18,15 @@ def todo(request):
 
 
 def todo_list(request):
-    parent_id = request.GET.get('parent_id')
-    logger.info('[todo_list] parent_id=%s', parent_id)
+    try:
+        parent_id = request.GET.get('parent_id')
+        if parent_id:
+            parent_id = int(parent_id)
+        logger.info('[todo_list] parent_id=%s', parent_id)
 
-    return JsonResponse({'todo_list': Todo.todo_list(parent_id=parent_id)})
+        return JsonResponse({'todo_list': Todo.todo_list(parent_id=parent_id)})
+    except ValueError as e:
+        return HttpResponseBadRequest('invalid parent_id')
 
 
 def create_todo(request):
@@ -34,6 +39,8 @@ def create_todo(request):
             logger.info('[create_todo] created todo=%s', todo)
 
             return JsonResponse(todo.info_dict())
+        else:
+            return HttpResponseBadRequest('invalid form data')
 
     return HttpResponseForbidden()
 
@@ -85,7 +92,12 @@ def todo_form(request):
 
 def delete(request):
     if request.method == 'POST':
-        delete_id = int(request.POST.get('delete_id'))
+        try:
+            delete_id = int(request.POST.get('delete_id'))
+        except ValueError as e:
+            logger.error(e)
+            return HttpResponseBadRequest('invalid delete_id')
+
         logger.info('[delete] %d', delete_id)
         try:
             todo = Todo.objects.get(id=delete_id)
@@ -94,5 +106,6 @@ def delete(request):
             return JsonResponse({'success': True})
         except Exception as e:
             logger.error('[delete] %s', e)
+            return HttpResponseBadRequest('invalid delete_id')
 
     return HttpResponseForbidden()

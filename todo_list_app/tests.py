@@ -81,7 +81,7 @@ class BackendTestCase(django.test.TestCase):
         response = self.c.post('/b/todo/', {
             'todo_name': 'First Todo5561', 'pub_date': wrong_pub_date, 'parent_todo': t.id, 'priority': ''
         })
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_update_todo(self):
         # success
@@ -128,7 +128,7 @@ class BackendTestCase(django.test.TestCase):
         response = self.c.post('/b/delete/', {
             'delete_id': -1,
         })
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_delete_todo_success(self):
         t = self.test_data[0]

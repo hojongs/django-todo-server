@@ -35,6 +35,7 @@ class Todo(models.Model):
             self.priority = None
 
         # parse parent_todo
-        self.parent_todo_id = int(self.__dict__.pop('parent_todo'))
-        if self.parent_todo_id == self.id:
-            raise ValidationError('Invalid parent')
+        if 'parent_todo' in self.__dict__:
+            self.parent_todo_id = int(self.__dict__.pop('parent_todo'))
+            if self.parent_todo_id == self.id:
+                raise ValidationError('Invalid parent')
