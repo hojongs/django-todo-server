@@ -10,11 +10,16 @@ function url_param (name) {
 
 var todo_id = url_param('todo_id');
 
-// set form.action
+var h1 = $('h1');
 var form = $('form');
+
+h1.text('Create Todo');
 var action = '/b/todo/';
 if (todo_id)
+{
+    h1.text('Update Todo');
     action = '/b/todo/'+todo_id+'/';
+}
 form.attr('action', action);
 
 $.ajax({
