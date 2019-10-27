@@ -23,6 +23,8 @@
       * 프로젝트 내 todo_list_client 구현
       * jQuery 기반 Web Client
   * Demo server 구축하여 host url 제출 (완료)
+    * Demo server Host URL : http://hojong.shop:8001
+    * GCP instance를 사용해 서비스 중
 
 ## Tech Stacks
 * Backend : Python/Django
