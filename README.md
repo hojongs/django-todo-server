@@ -171,12 +171,15 @@
 * 하위 Todo item은 들여쓰기로 구분되어 보여짐
 * Create 버튼을 통해 Todo item 생성 가능
 * Todo item을 클릭하여 Todo item의 정보 조회 가능
+* <img src="/img/index.jpg" width="50%" height="50%">
+
 
 ### Todo item 조회 (Detail view)
 * URL : /<todo_id>/
 #### Description
 * id=<todo_id>인 Todo의 정보를 보여주는 페이지
 * Update, Delete 버튼을 통해 Todo item의 수정/삭제 가능
+* <img src="/img/todo_item.jpg" width="50%" height="50%">
 
 ### Todo item 생성/수정
 * URL : /todo_form/
@@ -184,6 +187,8 @@
 * Form을 통해 Todo의 4개 필드를 입력받는 페이지
 * Create 버튼으로 접근했을 경우 Todo 생성을 처리
 * Update 버튼으로 접근했을 경우 Todo 수정을 처리
+* <img src="/img/create_todo.jpg" width="50%" height="50%">
+* <img src="/img/update_todo.jpg" width="50%" height="50%">
 
 ## Todo table schema
 |id|todo_name|pub_date|parent_todo|priority|
