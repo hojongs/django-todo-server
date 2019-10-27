@@ -52,9 +52,9 @@ class BackendTestCase(django.test.TestCase):
             t = self.test_data[i]
             response = self.c.get('/b/todo/%s/' % t.id)
             t2 = json.loads(response.content)
-            self.assertTrue(t.id == t2['id']
-                            and t.todo_name == t2['todo_name']
-                            and t.priority == t2['priority'])
+            self.assertEqual(t.id, t2['id'])
+            self.assertEqual(t.todo_name, t2['todo_name'])
+            self.assertEqual(t.priority, t2['priority'])
 
     def test_todo_form(self):
         t = self.test_data[0]
@@ -65,22 +65,47 @@ class BackendTestCase(django.test.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_todo(self):
-        t = self.test_data[0]
         response = self.c.post('/b/todo/', {
-            'todo_name': 'First Todo5561', 'pub_date': ['2019-10-25 18:27:07'], 'parent_todo': t.id, 'priority': ''
+            'todo_name': 'First Todo5561', 'pub_date': '2019-10-25 18:27:07', 'parent_todo': '', 'priority': ''
         })
         self.assertEqual(len(self.test_data)+1, len(Todo.objects.all()))
+
+        t = self.test_data[0]
+        response = self.c.post('/b/todo/', {
+            'todo_name': 'First Todo5561', 'pub_date': '2019-10-25 18:27:07', 'parent_todo': t.id, 'priority': ''
+        })
+        self.assertEqual(len(self.test_data)+2, len(Todo.objects.all()))
+
+        t = self.test_data[0]
+        wrong_pub_date = 'asdf'
+        response = self.c.post('/b/todo/', {
+            'todo_name': 'First Todo5561', 'pub_date': wrong_pub_date, 'parent_todo': t.id, 'priority': ''
+        })
+        self.assertEqual(response.status_code, 403)
 
     def test_update_todo(self):
         t = self.test_data[0]
         todo_name = 'changed todo'
-
         response = self.c.post('/b/todo/%s/' % t.id, {
             'todo_name': todo_name,
         })
-
         self.assertEqual(len(self.test_data), len(Todo.objects.all()))
         self.assertEqual(Todo.objects.get(id=t.id).todo_name, todo_name)
+
+        t = self.test_data[1]
+        origin_name = t.todo_name
+        origin_pub_date = t.pub_date
+        todo_name = 'wrong pub dated Todo'
+        wrong_pub_date = 'asdf'
+        response = self.c.post('/b/todo/%s/' % t.id, {
+            'todo_name': todo_name,
+            'pub_date': wrong_pub_date,
+        })
+        print(response.status_code, response.content)
+
+        t = Todo.objects.get(id=t.id)
+        self.assertEqual(t.todo_name, origin_name)
+        self.assertEqual(t.pub_date, origin_pub_date)
 
     def test_delete_todo_forbidden(self):
         t = self.test_data[0]

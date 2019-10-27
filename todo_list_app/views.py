@@ -1,6 +1,7 @@
 import logging
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from .models import Todo
 from .forms import TodoForm
@@ -43,7 +44,7 @@ def todo_detail(request, todo_id):
             todo = Todo.objects.get(id=todo_id)
 
             return JsonResponse(todo.info_dict())
-        except Exception as e:
+        except ObjectDoesNotExist as e:
             return HttpResponseBadRequest('Wrong Todo ID')
     elif request.method == 'POST':
         return update_todo(request, todo_id)
@@ -58,12 +59,15 @@ def update_todo(request, todo_id):
             todo = Todo.objects.get(id=todo_id)
 
             todo.__dict__.update(request.POST.items())
+            todo.full_clean()  # validation of fields
             todo.save()
-
             return JsonResponse(todo.info_dict())
-        except Exception as e:
+        except ObjectDoesNotExist as e:
             logger.error(e)
             return HttpResponseBadRequest('Wrong Todo ID')
+        except ValidationError as e:
+            logger.error(e)
+            return HttpResponseBadRequest('Invalid value of a field')
 
 
 def todo_form(request):
