@@ -3,28 +3,33 @@
 해야 할 일을 작성하여 저장해두고 관리하는 서비스의 API 서버 및 클라이언트
 
 ## 요구사항 충족여부
-1. 필수사항
+* 필수사항
   * API Server 구현 (완료)
     * 프로젝트 내 todo_list_app 구현
-  * Documentation (API Reference Docs) (완료, README.md에 작성하였음)
+    * 생성,수정,조회,삭제 기능 구현
+  * Documentation (API Reference Docs) (완료)
+    * README.md에 작성
   * Github repo에 오픈 프로젝트 생성 후 업로드 (완료)
-2. 선택사항
-  1. 필수사항 외 기능 (완료)
-    * Logging 기능
-    * Unit test 기능
-    * 하위 Todo 추가 기능
-    * README.md : 3가지 기능에 대한 간단한 설명 작성하였음
-  2. 완성된 Backend API를 사용하는 테스트 목적의 간단한 To Do List 클라이언트 구현 (완료)
-    * 프로젝트 내 todo_list_client 구현
-    * jQuery 기반 Web Client
-  3. Demo server 구축하여 host url 제출 (완료)
+* 선택사항
+  * 필수사항 외 기능 (완료)
+    * Logging 기능 : API별 요청 처리 시 log 작성
+    * Unit test 기능 : API별 test code 작성
+    * 조회 기능 분리 (Todo List 기능 + Todo item 조회 기능)
+      * Todo List 페이지를 통해 모든 Todo를 조회
+      * Todo item 페이지를 통해 각각의 Todo item을 조회
+    * 하위 Todo 추가 기능 : 상위 Todo와 하위 Todo 구분 가능, 하위 Todo의 깊이 제한 없음
+    * (README.md : 3가지 기능에 대한 간단한 설명 작성하였음)
+  * 완성된 Backend API를 사용하는 테스트 목적의 간단한 To Do List 클라이언트 구현 (완료)
+      * 프로젝트 내 todo_list_client 구현
+      * jQuery 기반 Web Client
+  * Demo server 구축하여 host url 제출 (완료)
 
 ## Tech Stacks
 * Backend : Python/Django
-* Front-end : HTML/CSS/JS, jQuery
+* Frontend : HTML/CSS/JS, jQuery
 
 ## Usage
-* Run development server : python manage.py runserver
+* Run development server : `python manage.py runserver`
 
 ## Project Structure
 * todo_list_server (project)
@@ -33,6 +38,7 @@
 
 ## Backend API
 ### Get Todo list API
+* Todo List를 가져옴
 * URL : /b/todo/
 * Method : GET
 * Request Parameter : parent_id (in get parameter)
@@ -52,6 +58,7 @@
   ```
 
 ### Get Todo item API
+* 하나의 Todo item 정보를 가져옴
 * URL : /b/todo/<todo_id>/
 * Method : GET
 * Request Parameter : todo_id (in url)
@@ -70,6 +77,7 @@
   ```
 
 ### Create Todo API
+* Todo item 생성
 * URL : /b/todo/
 * Method : POST
 * Request Parameter : Todo Form Data
@@ -98,6 +106,7 @@
   ```
 
 ### Update Todo API
+* 하나의 Todo item의 데이터를 수정
 * URL : /b/todo/<todo_id>/
 * Method : POST
 * Request Parameter : todo_id, Todo Form Data
@@ -126,6 +135,7 @@
   ```
 
 ### Delete Todo API
+* 하나의 Todo item을 삭제
 * URL : /delete/
 * Method : POST
 * Request Parameter : delete_id (in ger parameter)
@@ -134,6 +144,7 @@
 * Response Data : `{"success": True}` 를 Json 형태로 응답
 
 ### Todo Form API
+* Frontend에서 사용되는 Form HTML Code를 생성
 * URL : /todo_form/
 * Method : GET
 * Request Parameter : todo_id (수정할 Todo의 id
@@ -232,8 +243,8 @@
       
 ## Language/Library Version
 ### Backend
-Python==3.6.8
-Django==2.2.6
+* Python==3.6.8
+* Django==2.2.6
 
 ### Frontend
-jQuery-3.4.1
+* jQuery-3.4.1
