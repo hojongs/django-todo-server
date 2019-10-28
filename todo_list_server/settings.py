@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'todo_list_app.apps.TodoListAppConfig',
-    'todo_list_client.apps.TodoListClientConfig',
+    'todo_list_view.apps.TodoListViewConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
