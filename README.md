@@ -12,23 +12,24 @@
   * Github repo에 오픈 프로젝트 생성 후 업로드 (완료)
 * 선택사항
   * 필수사항 외 기능 (완료)
-    * Logging 기능 : API별 요청 처리 시 log 작성
-    * Unit test 기능 : API별 test code 작성
     * 조회 기능 분리 (Todo List 기능 + Todo item 조회 기능)
       * Todo List 페이지를 통해 모든 Todo를 조회
       * Todo item 페이지를 통해 각각의 Todo item을 조회
+    * Logging 기능 : API별 요청 처리 시 log 작성
+    * Unit test 기능 : API별 test code 작성
     * 하위 Todo 추가 기능 : 상위 Todo와 하위 Todo 구분 가능, 하위 Todo의 깊이 제한 없음
-    * (README.md : 3가지 기능에 대한 간단한 설명 작성하였음)
+    * (README.md에 "Logging, Unit test, 하위 Todo 추가 기능"에 대한 간단한 설명)
+    * HTML/CSS/JS 기반 View pages 구현 : todo_list_view
   * 완성된 Backend API를 사용하는 테스트 목적의 간단한 To Do List 클라이언트 구현 (완료)
-      * 프로젝트 내 todo_list_client 구현
-      * jQuery 기반 Web Client
+      * 프로젝트 내 todo_list_client.py 구현
   * Demo server 구축하여 host url 제출 (완료)
     * Demo server Host URL : http://hojong.shop:8001
-    * GCP instance를 사용해 서비스 중
+    * service on GCP instance
 
 ## Tech Stacks
-* Backend : Python/Django
-* Frontend : HTML/CSS/JS, jQuery
+* Backend : Python, Django
+* Client : Python, Requests lib
+* Frontend : HTML/CSS/JS, jQuery lib
 
 ## Usage
 * Run development server : `python manage.py runserver`
@@ -36,7 +37,8 @@
 ## Project Structure
 * todo_list_server (project)
   * todo_list_app (backend API app)
-  * todo_list_client (frontend view app)
+  * todo_list_client.py (http client for testing backend API)
+  * todo_list_view (frontend view app)
 
 ## Backend API
 ### Get Todo list API
@@ -163,34 +165,7 @@
   </select></td></tr>
   <tr><th><label for="id_priority">Priority:</label></th><td><input type="number" name="priority" id="id_priority"></td></tr>
   ```
-* 사용 이유 : Frontend의 Form 코드를 빠르게 구현하기 위하여 사용
-
-## View pages
-### Todo list 조회
-* URL : / (root)
-#### Description
-* 모든 Todo item을 list 형태로 보여주는 페이지
-* 하위 Todo item은 들여쓰기로 구분되어 보여짐
-* Create 버튼을 통해 Todo item 생성 가능
-* Todo item을 클릭하여 Todo item의 정보 조회 가능
-* <img src="/img/index.jpg" width="50%" height="50%">
-
-
-### Todo item 조회 (Detail view)
-* URL : /<todo_id>/
-#### Description
-* id=<todo_id>인 Todo의 정보를 보여주는 페이지
-* Update, Delete 버튼을 통해 Todo item의 수정/삭제 가능
-* <img src="/img/todo_item.jpg" width="50%" height="50%">
-
-### Todo item 생성/수정
-* URL : /todo_form/
-#### Description
-* Form을 통해 Todo의 4개 필드를 입력받는 페이지
-* Create 버튼으로 접근했을 경우 Todo 생성을 처리
-* Update 버튼으로 접근했을 경우 Todo 수정을 처리
-* <img src="/img/create_todo.jpg" width="50%" height="50%">
-* <img src="/img/update_todo.jpg" width="50%" height="50%">
+* API 용도 : Frontend의 Form 코드 자동 생성
 
 ## Todo table schema
 |id|todo_name|pub_date|parent_todo|priority|
@@ -205,18 +180,6 @@
 * pub_date : 작성 날짜, Datetime (yyyy-mm-dd hh:MM:ss)
 * parent_todo : 상위 Todo, Foreign Key (Reference on Todo table)
 * priority : 우선 순위, Integer
-
-## 추가 기능
-* Logging
-  * backend API 처리 중 logging 추가
-  * 코드 동작 파악 및 error 발생 시의 bug tracking을 위하여 추가
-* Unit test
-  * tests.py 파일
-  * Test run command : python manage.py test
-  * 코드 수정 시 API의 error 발생 여부를 빠르게 체크하기 위하여 사용
-* 하위 Todo 추가 기능
-  * 임의의 Todo에 소속된 하위 Todo를 추가할 수 있음
-  * 하위 Todo를 통하여 상위 Todo를 세부적으로 분류하여 저장 및 관리 가능
 
 ## Error handling
 * Get Todo list API
@@ -247,11 +210,53 @@
     * Request Example : /b/todo/?delete_id=99999 (id=99999인 Todo가 존재하지 않을 경우)
     * Response : Bad Request(invalid delete_id)
       * Status Code : 400
+
+## 추가 기능
+* Logging
+  * backend API 처리 중 logging 추가
+  * 코드 동작 파악 및 error 발생 시의 bug tracking을 위하여 추가
+* Unit test
+  * tests.py 파일
+  * Test run command : python manage.py test
+  * 코드 수정 시 API의 error 발생 여부를 빠르게 체크하기 위하여 사용
+* 하위 Todo 추가 기능
+  * 임의의 Todo에 소속된 하위 Todo를 추가할 수 있음
+  * 하위 Todo를 통하여 상위 Todo를 세부적으로 분류하여 저장 및 관리 가능
+
+## View pages (Frontend)
+### Todo list 조회
+* URL : / (root)
+#### Description
+* 모든 Todo item을 list 형태로 보여주는 페이지
+* 하위 Todo item은 들여쓰기로 구분되어 보여짐
+* Create 버튼을 통해 Todo item 생성 가능
+* Todo item을 클릭하여 Todo item의 정보 조회 가능
+* <img src="/img/index.jpg" width="50%" height="50%">
+
+### Todo item 조회 (Detail view)
+* URL : /<todo_id>/
+#### Description
+* id=<todo_id>인 Todo의 정보를 보여주는 페이지
+* Update, Delete 버튼을 통해 Todo item의 수정/삭제 가능
+* <img src="/img/todo_item.jpg" width="50%" height="50%">
+
+### Todo item 생성/수정
+* URL : /todo_form/
+#### Description
+* Form을 통해 Todo의 4개 필드를 입력받는 페이지
+* Create 버튼으로 접근했을 경우 Todo 생성을 처리
+* Update 버튼으로 접근했을 경우 Todo 수정을 처리
+* <img src="/img/create_todo.jpg" width="50%" height="50%">
+* <img src="/img/update_todo.jpg" width="50%" height="50%">
       
 ## Language/Library Version
 ### Backend
 * Python==3.6.8
 * Django==2.2.6
+
+
+### Client
+* requests
 
 ### Frontend
 * jQuery-3.4.1
