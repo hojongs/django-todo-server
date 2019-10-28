@@ -25,7 +25,7 @@ SECRET_KEY = '&wslc3_n*44o74a2)dki5*mm_fk0!!s-ua30*l)84(ax#bcx6!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['hojong.shop']
 
 
 # Application definition
