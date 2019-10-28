@@ -6,6 +6,7 @@ from .models import Todo
 from .forms import TodoForm
 
 logger = logging.getLogger(__name__)
+json_dumps_params = {'ensure_ascii': False}
 
 
 def todo(request):
@@ -24,7 +25,7 @@ def todo_list(request):
             parent_id = int(parent_id)
         logger.info('[todo_list] parent_id=%s', parent_id)
 
-        return JsonResponse({'todo_list': Todo.todo_list(parent_id=parent_id)})
+        return JsonResponse({'todo_list': Todo.todo_list(parent_id=parent_id)}, json_dumps_params=json_dumps_params)
     except ValueError as e:
         return HttpResponseBadRequest('invalid parent_id')
 
@@ -38,7 +39,7 @@ def create_todo(request):
             todo = form.save()
             logger.info('[create_todo] created todo=%s', todo)
 
-            return JsonResponse(todo.info_dict())
+            return JsonResponse(todo.info_dict(), json_dumps_params=json_dumps_params)
         else:
             return HttpResponseBadRequest('invalid form data')
 
@@ -50,7 +51,7 @@ def todo_detail(request, todo_id):
         try:
             todo = Todo.objects.get(id=todo_id)
 
-            return JsonResponse(todo.info_dict())
+            return JsonResponse(todo.info_dict(), json_dumps_params=json_dumps_params)
         except ObjectDoesNotExist as e:
             return HttpResponseBadRequest('Wrong Todo ID')
     elif request.method == 'POST':
@@ -69,7 +70,7 @@ def update_todo(request, todo_id):
             logger.info('[update_todo] todo.__dict__=%s', todo.__dict__)
             todo.full_clean()  # validation of fields
             todo.save()
-            return JsonResponse(todo.info_dict())
+            return JsonResponse(todo.info_dict(), json_dumps_params=json_dumps_params)
         except ObjectDoesNotExist as e:
             logger.error(e)
             return HttpResponseBadRequest('Wrong Todo ID')
@@ -103,7 +104,7 @@ def delete(request):
             todo = Todo.objects.get(id=delete_id)
             todo.delete()
 
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True}, json_dumps_params=json_dumps_params)
         except Exception as e:
             logger.error('[delete] %s', e)
             return HttpResponseBadRequest('invalid delete_id')
